@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO-DO App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-image: linear-gradient(to right, #eea2a2 0%, #bbc1bf 19%, #57c6e1 42%, #b49fda 79%, #7ac5d8 100%);
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    max-width: 500px;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Box shadow */
+}
+
+h1 {
+    text-align: center;
+    color: #00053f;
+    background-color: ;
+    
+    padding: 5px;
+    border-radius: 30px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Box shadow */
+}
+
+.completed {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
+</style>
+<body>
+    <div class="container">
+        <h1>TO-DO App</h1>
+        <input type="text" id="taskInput" placeholder="Enter task...">
+        <button id="addTaskBtn">Add Task</button>
+        <ul id="taskList">
+            <!-- Tasks will be dynamically added here -->
+        </ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+<script>
+    // Selectors
+const taskInput = document.getElementById('taskInput');
+const addTaskBtn = document.getElementById('addTaskBtn');
+const taskList = document.getElementById('taskList');
+
+// Event Listeners
+addTaskBtn.addEventListener('click', addTask);
+taskList.addEventListener('click', deleteOrToggle);
+
+// Functions
+function addTask() {
+    const taskText = taskInput.value.trim();
+    if (taskText !== '') {
+        const li = document.createElement('li');
+        li.innerText = taskText;
+        taskList.appendChild(li);
+        taskInput.value = '';
+        saveTasksToLocalStorage();
+    }
+}
+
+function deleteOrToggle(e) {
+    if (e.target.tagName === 'LI') {
+        e.target.classList.toggle('completed');
+        saveTasksToLocalStorage();
+    }
+}
+
+function saveTasksToLocalStorage() {
+    const tasks = [];
+    taskList.querySelectorAll('li').forEach(task => {
+        tasks.push({
+            text: task.innerText,
+            completed: task.classList.contains('completed')
+        });
+    });
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function loadTasksFromLocalStorage() {
+    const tasks = JSON.parse(localStorage.getItem('tasks'));
+    if (tasks) {
+        tasks.forEach(task => {
+            const li = document.createElement('li');
+            li.innerText = task.text;
+            if (task.completed) {
+                li.classList.add('completed');
+            }
+            taskList.appendChild(li);
+        });
+    }
+}
+
+// Load tasks from local storage on page load
+document.addEventListener('DOMContentLoaded', loadTasksFromLocalStorage);
+
+</script>
+</html>
